@@ -36,4 +36,19 @@ class Mk2CalculatorTest extends TestCase
         $change = $this->calculator->getChange(1);
         $this->assertNull($change);
     }
+
+    public function testGetChangeHard()
+    {
+        $change = $this->calculator->getChange(12);
+        $this->assertInstanceOf(Change::class, $change);
+        $this->assertEquals(1, $change->bill10);
+        $this->assertEquals(0, $change->bill5);
+        $this->assertEquals(1, $change->coin2);
+
+        $change = $this->calculator->getChange(27);
+        $this->assertInstanceOf(Change::class, $change);
+        $this->assertEquals(2, $change->bill10);
+        $this->assertEquals(1, $change->bill5);
+        $this->assertEquals(1, $change->coin2);
+    }
 }
