@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/automaton")
  */
-class AutomatonController extends Controller
+final class AutomatonController extends Controller
 {
     /**
      * @Route("/{model}/change/{amount}", name="automaton_change",

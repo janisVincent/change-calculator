@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace AppBundle\Calculator;
 
+use AppBundle\Registry\CalculatorRegistry;
+
 final class Mk2Calculator extends AbstractCalculator
 {
-    public function __construct()
-    {
-        $this->model = self::MODEL_MK2;
-        $this->changeTypes = [self::CHANGE_BILL10, self::CHANGE_BILL5, self::CHANGE_COIN2];
-    }
+    /** {@inheritdoc} */
+    protected $model = CalculatorRegistry::MODEL_MK2;
+
+    /** {@inheritdoc} */
+    protected $changeTypes = [self::BILL10, self::BILL5, self::COIN2];
 }

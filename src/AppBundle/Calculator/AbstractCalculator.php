@@ -5,50 +5,51 @@ declare(strict_types=1);
 namespace AppBundle\Calculator;
 
 use AppBundle\Model\Change;
+use AppBundle\Registry\CalculatorRegistry;
 
 abstract class AbstractCalculator implements CalculatorInterface
 {
-    const MODEL_MK1 = 'mk1';
-    const MODEL_MK2 = 'mk2';
+    const BILL5 = 'bill5';
+    const BILL10 = 'bill10';
+    const COIN1 = 'coin1';
+    const COIN2 = 'coin2';
 
-    protected const CHANGE_BILL10 = 'bill10';
-    protected const CHANGE_BILL5 = 'bill5';
-    protected const CHANGE_COIN2 = 'coin2';
-    protected const CHANGE_COIN1 = 'coin1';
-
-    /** @var string */
+    /**
+     * Model name, as listed on registry
+     *
+     * @see CalculatorRegistry
+     *
+     * @var string
+     */
     protected $model;
 
     /**
-     * Authorized change types, sorted by descending value
+     * Authorized change item(s), sorted by descending value
+     *
+     * @see getChangeItemValue()
      *
      * @var array
      */
-    protected $changeTypes = [];
+    protected $changeTypes = [self::BILL10, self::BILL5, self::COIN2, self::COIN1];
 
-    /**
-     * @return string Indicates the model of automaton
-     */
+    /** {@inheritdoc} */
     public function getSupportedModel(): string
     {
         return $this->model;
     }
 
-    /**
-     * @param int $amount The amount of money to turn into change
-     *
-     * @return Change The change, or null if the operation is impossible
-     */
+    /** {@inheritdoc} */
     public function getChange(int $amount): ?Change
     {
         $change = new Change();
         foreach ($this->changeTypes as $changeType) {
-            if (property_exists(Change::class, $changeType)) {
-                $ceilValue = $this->getChangeTypeValue($changeType);
-                while ($amount >= $ceilValue) {
-                    $change->{$changeType}++;
-                    $amount -= $ceilValue;
-                }
+            $ceilValue = $this->getChangeItemValue($changeType);
+            if (is_null($ceilValue)) {
+                continue;
+            }
+            while ($amount >= $ceilValue) {
+                $change->{$changeType}++;
+                $amount -= $ceilValue;
             }
         }
         if ($amount > 0) {
@@ -59,25 +60,29 @@ abstract class AbstractCalculator implements CalculatorInterface
     }
 
     /**
-     * Get integer value for a given change type
+     * Get change item real value
      *
      * @param string $changeType
      *
-     * @return int
+     * @return int|null
      */
-    private function getChangeTypeValue(string $changeType)
+    private function getChangeItemValue(string $changeType): ?int
     {
+        if (!property_exists(Change::class, $changeType)) {
+            return null;
+        }
+
         switch ($changeType) {
-            case self::CHANGE_BILL10:
+            case self::BILL10:
                 $value = 10;
                 break;
-            case self::CHANGE_BILL5:
+            case self::BILL5:
                 $value = 5;
                 break;
-            case self::CHANGE_COIN2:
+            case self::COIN2:
                 $value = 2;
                 break;
-            case self::CHANGE_COIN1:
+            case self::COIN1:
             default:
                 $value = 1;
                 break;
