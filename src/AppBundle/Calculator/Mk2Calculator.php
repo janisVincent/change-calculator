@@ -8,9 +8,13 @@ use AppBundle\Registry\CalculatorRegistry;
 
 final class Mk2Calculator extends AbstractCalculator
 {
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     protected $model = CalculatorRegistry::MODEL_MK2;
 
-    /** {@inheritdoc} */
-    protected $changeTypes = [self::BILL10, self::BILL5, self::COIN2];
+    /**
+     * {@inheritdoc}
+     */
+    protected $changeCoins = [self::COIN2, self::BILL5, self::BILL10];
 }
